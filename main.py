@@ -17,7 +17,7 @@ app = FastAPI()
 
 
 # /hello -- Endpoint to check if the MongoDB database server is alive (status)
-@app.get('/hello', status_code=200, description="Check if the Server is alive (status)")
+@app.get('/hello', status_code=200, description="Check if the Server is alive (status)", tags=["status"])
 async def hello(response: Response):  
     try:
         db = get_db_connection()
@@ -35,8 +35,8 @@ async def hello(response: Response):
 
 
 # /user/register -- Endpoint to create a user, accepts only application/json data as per the User data model (unique use by email)
-@app.post('/user/register', status_code=201, description="Register a new User")
-async def register(user: CreateUser, response: Response):
+@app.post('/user/signup', status_code=201, description="Signup a new User", tags=["user"])
+async def signup(user: CreateUser, response: Response):
     try:
         # print(user)
         db = get_db_connection()
@@ -67,7 +67,7 @@ async def register(user: CreateUser, response: Response):
 
 
 # /user/login -- Endpoint to login, accepts only application/json data as per the User data model
-@app.post('/user/login', status_code=200, description="Login a user")
+@app.post('/user/login', status_code=200, description="Login a user", tags=["user"])
 async def login(user: LoginUser, response: Response):
     try:
         db = get_db_connection()

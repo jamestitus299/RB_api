@@ -7,8 +7,6 @@ uvicorn
 dotenv
 passlib[bcrypt]
 pyjwt
-jose 
-secrets
 
 # App
 fastapi
