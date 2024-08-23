@@ -1,10 +1,14 @@
 
 import os
+from dotenv import load_dotenv
 from flask import Flask, jsonify
 from fastapi import FastAPI, Form, HTTPException, Request, status
+from pymongo import MongoClient
 
 from models.user import User, UserResponse
 from db_conn.db import get_db_connection
+
+load_dotenv()
 
 # Flask app
 # app = Flask(__name__)
@@ -25,14 +29,16 @@ async def hello():
 async def register(user:User):
     try:
         print(user)
-        client = get_db_connection()
-        db = client.rb_databse
-        users = db.users
-        result = users.insert_one(user.model_dump())
+        # db = get_db_connection()
+        print(os.environ.get('MONGO_CONN_STRING'))
+        # client = MongoClient(os.environ.get('MONGO_CONN_STRING'))
+        # db = client["rb_database"]
+        # users = db.users
+        # result = users.insert_one(user.model_dump())
 
-        insertedUser = {result.inserted_id, user.name, user.email}
+        # insertedUser = {result.inserted_id, user.name, user.email}
 
-        return UserResponse.from_orm(insertedUser), status.HTTP_201_CREATED
+        return UserResponse.from_orm(user), status.HTTP_201_CREATED
     except Exception as e:
         print(e)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")

@@ -1,10 +1,11 @@
 # Dev environment
 pip
 autopep8
-pymongo[srv]
-fastapi[standard]
+pymongo
 pydantic
 uvicorn
+dotenv
 
 # App
+fastapi
 flask
