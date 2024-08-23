@@ -1,4 +1,4 @@
-# Flask API -- FastAPI
+#  API -- FastAPI
 A set of APIs for user registration, login, linking an ID, and implementing joins and chain delete functionality using Python and MongoDB.
 
 ## Endpoints

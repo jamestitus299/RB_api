@@ -2,11 +2,11 @@
 pip
 autopep8
 pymongo
-pydantic
+pydantic[email]
 uvicorn
-dotenv
 passlib[bcrypt]
 pyjwt
+python-dotenv
 
 # App
 fastapi
