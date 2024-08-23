@@ -13,6 +13,7 @@ load_dotenv()
 # app = Flask(__name__)
 app = FastAPI()
 
+# Endpoint that serves the index.html
 @app.get("/", description="Serves the Html File", tags=["root"])
 async def root():
     return FileResponse("src/index.html")
