@@ -7,7 +7,7 @@ from fastapi import FastAPI, Form, HTTPException, Request, Response, status
 
 from models.user import CreateUser, LoginUser
 from db_conn.db import get_db_connection
-from utils.password_security import encrypt_password, check_encrypted_password
+from auth.password_security import encrypt_password, check_encrypted_password
 
 load_dotenv()
 
@@ -16,8 +16,8 @@ load_dotenv()
 app = FastAPI()
 
 
-# /hello -- Endpoint to check if the MongoDB database server is alive
-@app.get('/hello')
+# /hello -- Endpoint to check if the MongoDB database server is alive (status)
+@app.get('/hello', status_code=200, description="Check if the Server is alive (status)")
 async def hello(response: Response):  
     try:
         db = get_db_connection()
@@ -32,8 +32,10 @@ async def hello(response: Response):
         return {'message': "Internal Server Error"}, status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
+
+
 # /user/register -- Endpoint to create a user, accepts only application/json data as per the User data model (unique use by email)
-@app.post('/user/register', status_code=201)
+@app.post('/user/register', status_code=201, description="Register a new User")
 async def register(user: CreateUser, response: Response):
     try:
         # print(user)
@@ -62,9 +64,11 @@ async def register(user: CreateUser, response: Response):
         return {'error': "Could not create User"}, status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
+
+
 # /user/login -- Endpoint to login, accepts only application/json data as per the User data model
-@app.post('/user/login')
-async def register(user: LoginUser, response: Response):
+@app.post('/user/login', status_code=200, description="Login a user")
+async def login(user: LoginUser, response: Response):
     try:
         db = get_db_connection()
         users = db.users

@@ -6,6 +6,8 @@ pydantic
 uvicorn
 dotenv
 passlib[bcrypt]
+jose 
+secrets
 
 # App
 fastapi
