@@ -3,12 +3,13 @@ import os
 from dotenv import load_dotenv
 from fastapi.responses import JSONResponse
 from flask import Flask, jsonify
-from fastapi import FastAPI, Form, HTTPException, Request, Response, status
+from fastapi import Depends, FastAPI, Form, HTTPException, Request, Response, status
 
 from models.user import CreateUser, LoginUser
 from db_conn.db import get_db_connection
 from auth.password_security import encrypt_password, check_encrypted_password
 from auth.jwt_auth import sign_jwt
+from auth.auth_bearer import JWTBearer
 
 load_dotenv()
 
@@ -56,12 +57,13 @@ async def signup(user: CreateUser, response: Response):
 
         if(result.acknowledged):
             response.status_code = 201
+            # generate jwt token and send it in the response
             jwt_token = sign_jwt(user.email)
             return {'user': inserted_id, 'access_token' : str(jwt_token["access_token"]) }, status.HTTP_201_CREATED
         else:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not Create User.")
     except Exception as e:
-        print(e)
+        # print(e)
         response.status_code = 500
         return {'error': "Could not create User"}, status.HTTP_500_INTERNAL_SERVER_ERROR
 
@@ -78,8 +80,10 @@ async def login(user: LoginUser, response: Response):
 
         if( result and check_encrypted_password(user.password, result["password"])):
             response.status_code = 200
+            user_id = result["_id"]
+            # generate jwt token and send it in the response
             jwt_token = sign_jwt(user.email)
-            return {'user': "User Logged in", 'access_token' : str(jwt_token["access_token"]) }, status.HTTP_200_OK
+            return {'user': str(user_id), 'access_token' : str(jwt_token["access_token"]) }, status.HTTP_200_OK
         else:
             response.status_code = 403
             return {'Error':"Invalid Credentials"}, status.HTTP_403_FORBIDDEN
@@ -87,6 +91,34 @@ async def login(user: LoginUser, response: Response):
         response.status_code = 500
         return {'Error':"Internal Server Error"}, status.HTTP_500_INTERNAL_SERVER_ERROR
     
+
+
+from models.note import Note
+# /note/create -- Endpoint to create a note, linked to a user
+@app.post('/note/create', status_code=201, description="Create a note", tags=["note"], dependencies=[Depends(JWTBearer())])
+async def create_note(note: Note, response: Response):
+    try:
+        # print(user)
+        db = get_db_connection()
+        users = db.notes
+        result = users.insert_one(note.model_dump())
+        inserted_id = str(result.inserted_id)
+
+        if(result.acknowledged):
+            response.status_code = 201
+            return {'note': inserted_id, }, status.HTTP_201_CREATED
+        else:
+            response.status_code = 500
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not Create Note.")
+    except Exception as e:
+        # print(e)
+        response.status_code = 500
+        return {'error': "Could not create Note"}, status.HTTP_500_INTERNAL_SERVER_ERROR
+
+
+
+
+
 
 
 if __name__ == "__main__":
