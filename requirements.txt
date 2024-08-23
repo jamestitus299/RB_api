@@ -3,6 +3,7 @@ pip
 autopep8
 pymongo
 fastapi[standard]
+pydantic
 uvicorn
 
 # App
