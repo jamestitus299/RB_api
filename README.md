@@ -13,11 +13,11 @@ A set of APIs for user registration, login, creating task and note lined to a us
     - Chain Delete: Implement functionality to delete a user and all associated data across collections.
 
 # Getting started
-Create a virtual environment and install the dependencies from the requirements.txt , then start the uvicorn server
+    Create a virtual environment and install the dependencies from the requirements.txt , then start the uvicorn server
 
-or run
+    or run
 
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn main:app --reload
+        python3 -m venv .venv
+        source .venv/bin/activate
+        pip install -r requirements.txt
+        uvicorn main:app --reload
