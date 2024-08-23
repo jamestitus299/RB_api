@@ -8,6 +8,7 @@ from fastapi import FastAPI, Form, HTTPException, Request, Response, status
 from models.user import CreateUser, LoginUser
 from db_conn.db import get_db_connection
 from auth.password_security import encrypt_password, check_encrypted_password
+from auth.jwt_auth import sign_jwt
 
 load_dotenv()
 
@@ -55,7 +56,8 @@ async def signup(user: CreateUser, response: Response):
 
         if(result.acknowledged):
             response.status_code = 201
-            return {'user': inserted_id}, status.HTTP_201_CREATED
+            jwt_token = sign_jwt(user.email)
+            return {'user': inserted_id, 'access_token' : str(jwt_token["access_token"]) }, status.HTTP_201_CREATED
         else:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not Create User.")
     except Exception as e:
@@ -76,7 +78,8 @@ async def login(user: LoginUser, response: Response):
 
         if( result and check_encrypted_password(user.password, result["password"])):
             response.status_code = 200
-            return {'user': "User Logged in"}, status.HTTP_200_OK
+            jwt_token = sign_jwt(user.email)
+            return {'user': "User Logged in", 'access_token' : str(jwt_token["access_token"]) }, status.HTTP_200_OK
         else:
             response.status_code = 403
             return {'Error':"Invalid Credentials"}, status.HTTP_403_FORBIDDEN
