@@ -1,15 +1,24 @@
+
 import os
+from flask import Flask, jsonify
+from fastapi import FastAPI, status
 
-from flask import Flask, send_file
 
-app = Flask(__name__)
+# Flask app
+# app = Flask(__name__)
+app = FastAPI()
 
-@app.route("/")
-def index():
-    return send_file('src/index.html')
 
-def main():
-    app.run(port=int(os.environ.get('PORT', 80)))
+@app.get('/hello')
+async def hello():
+    return {'message': 'Hello from RB_API!'}, 200
+
+
+
+
+
+   
 
 if __name__ == "__main__":
-    main()
+    app.run(port=int(os.environ.get('PORT', 80)))
+    
