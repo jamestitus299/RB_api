@@ -7,7 +7,7 @@ from models.user import CreateUser, LoginUser
 
 router = APIRouter()
 
-# /user/register -- Endpoint to create a user, accepts only application/json data as per the User data model (an user is unique by email)
+# /user/signup -- Endpoint to create a user, accepts only application/json data as per the User data model (an user is unique by email)
 @router.post('/signup', status_code=201, description="Signup a new User", tags=["user"])
 async def signup(user: CreateUser, response: Response):
     try:
