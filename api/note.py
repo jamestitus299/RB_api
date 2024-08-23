@@ -7,7 +7,7 @@ router = APIRouter()
 
 
 # /note/create -- Endpoint to create a note, linked to a user
-@router.post('/note/create', status_code=201, description="Create a note", tags=["note"], dependencies=[Depends(JWTBearer())])
+@router.post('/create', status_code=201, description="Create a note", tags=["note"], dependencies=[Depends(JWTBearer())])
 async def create_note(note: Note, response: Response):
     try:
         # print(user)

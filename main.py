@@ -13,7 +13,7 @@ load_dotenv()
 app = FastAPI()
 
 
-app.include_router(auth.router, prefix="/")
+app.include_router(auth.router)
 app.include_router(task.router, prefix="/task")
 app.include_router(note.router, prefix="/note")
 
