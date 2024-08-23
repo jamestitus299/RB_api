@@ -6,6 +6,7 @@ pydantic
 uvicorn
 dotenv
 passlib[bcrypt]
+pyjwt
 jose 
 secrets
 
