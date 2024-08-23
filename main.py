@@ -1,9 +1,9 @@
 
 import os
 from dotenv import load_dotenv
-from fastapi.responses import FileResponse
-from flask import Flask, jsonify
+# from flask import Flask, jsonify
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 
 from api import task, note, auth, status
 
@@ -13,7 +13,7 @@ load_dotenv()
 # app = Flask(__name__)
 app = FastAPI()
 
-@app.get("/", description="Serves the Base Html", tags=["root"])
+@app.get("/", description="Serves the Html File", tags=["root"])
 async def root():
     return FileResponse("src/index.html")
 
