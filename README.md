@@ -15,9 +15,10 @@ A set of APIs for user registration, login, creating task and note lined to a us
 # Getting started
     Create a virtual environment and install the dependencies from the requirements.txt , then start the uvicorn server
 
-    or run
-
+    or run:
         python3 -m venv .venv
         source .venv/bin/activate
         pip install -r requirements.txt
+
+    start the server by:
         uvicorn main:app --reload
