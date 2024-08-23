@@ -13,7 +13,7 @@ load_dotenv()
 # app = Flask(__name__)
 app = FastAPI()
 
-# Endpoint that serves the index.html
+# This Endpoint serves the index.html
 @app.get("/", description="Serves the Html File", tags=["root"])
 async def root():
     return FileResponse("src/index.html")
@@ -26,5 +26,4 @@ app.include_router(status.router)
 
 
 if __name__ == "__main__":
-    app.run(port=int(os.environ.get('PORT', 80)))   
-    
+    app.run(port=int(os.environ.get('PORT', 80)))
