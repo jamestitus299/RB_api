@@ -18,7 +18,6 @@ app.include_router(task.router, prefix="/task")
 app.include_router(note.router, prefix="/note")
 
 
-
 if __name__ == "__main__":
     app.run(port=int(os.environ.get('PORT', 80)))   
     
