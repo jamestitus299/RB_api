@@ -1,18 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
+from pydantic_core import to_json
 from auth.auth_bearer import JWTBearer
 from db_conn.db import get_db_connection
 from models.task import Task
+from models.user import UserId
 
 router = APIRouter()
 
-# /note/create -- Endpoint to create a task, linked to a user
+# /create -- Endpoint to create a task, linked to a user
 @router.post('/create', status_code=201, description="Create a task", tags=["task"], dependencies=[Depends(JWTBearer())])
 async def create_task(task: Task, response: Response):
     try:
         # print(user)
         db = get_db_connection()
-        users = db.tasks
-        result = users.insert_one(task.model_dump())
+        tasks = db.tasks
+        result = tasks.insert_one(task.model_dump())
         inserted_id = str(result.inserted_id)
 
         if(result.acknowledged):
@@ -25,3 +27,28 @@ async def create_task(task: Task, response: Response):
         # print(e)
         response.status_code = 500
         return {'error': "Could not create Task"}, status.HTTP_500_INTERNAL_SERVER_ERROR
+    
+
+# /user -- Endpoint to retrieve all tasks created by a user
+@router.post('/user', status_code=200, description="Retrieve tasks created by user", tags=["task"], dependencies=[Depends(JWTBearer())])
+async def get_user_task(userId: UserId, response: Response):
+    try:
+        # print(userId.userId)
+        db = get_db_connection()
+        tasks = db.tasks
+        userId = str(userId.userId)
+        results = tasks.find({"user": userId}, {"task": 1, "_id": 0 }).limit(10)
+        
+        task_list = [task["task"] for task in results]    
+        if not task_list:
+            response.status_code = 404    
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User has no tasks.")
+        
+        # print(task_list)
+        return {'tasks': task_list }, status.HTTP_200_OK
+    except Exception as e:
+        # print(e)
+        response.status_code = 500
+        return {'error': "Could not retrieve Task"}, status.HTTP_500_INTERNAL_SERVER_ERROR
+    
+
