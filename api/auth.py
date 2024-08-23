@@ -7,8 +7,8 @@ from models.user import CreateUser, LoginUser
 
 router = APIRouter()
 
-# /user/register -- Endpoint to create a user, accepts only application/json data as per the User data model (unique use by email)
-@router.post('/user/signup', status_code=201, description="Signup a new User", tags=["user"])
+# /user/register -- Endpoint to create a user, accepts only application/json data as per the User data model (an user is unique by email)
+@router.post('/signup', status_code=201, description="Signup a new User", tags=["user"])
 async def signup(user: CreateUser, response: Response):
     try:
         # print(user)
@@ -42,7 +42,7 @@ async def signup(user: CreateUser, response: Response):
 
 
 # /user/login -- Endpoint to login, accepts only application/json data as per the User data model
-@router.post('/user/login', status_code=200, description="Login a user", tags=["user"])
+@router.post('/login', status_code=200, description="Login a user", tags=["user"])
 async def login(user: LoginUser, response: Response):
     try:
         db = get_db_connection()
@@ -61,21 +61,3 @@ async def login(user: LoginUser, response: Response):
     except Exception as e:
         response.status_code = 500
         return {'Error':"Internal Server Error"}, status.HTTP_500_INTERNAL_SERVER_ERROR
-
-
-
-
-# /hello -- Endpoint to check if the MongoDB database server is alive (status)
-@router.get('/hello', status_code=200, description="Check if the Server is alive (status)", tags=["status"])
-async def hello(response: Response):  
-    try:
-        db = get_db_connection()
-        result = db.command('serverStatus')
-        if result:
-            response.status_code = 200
-            return {'message': 'Hello from RB API!'}, status.HTTP_200_OK
-        else:
-            raise HTTPException
-    except Exception as e:  
-        response.status_code = 500
-        return {'message': "Internal Server Error"}, status.HTTP_500_INTERNAL_SERVER_ERROR

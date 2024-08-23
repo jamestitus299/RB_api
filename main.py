@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify
 from fastapi import FastAPI
 
-from api import task, note, auth
+from api import task, note, auth, status
 
 load_dotenv()
 
@@ -12,10 +12,11 @@ load_dotenv()
 # app = Flask(__name__)
 app = FastAPI()
 
-
-app.include_router(auth.router)
+# routes for endpoints
+app.include_router(auth.router, prefix="/user")
 app.include_router(task.router, prefix="/task")
 app.include_router(note.router, prefix="/note")
+app.include_router(status.router)
 
 
 if __name__ == "__main__":
