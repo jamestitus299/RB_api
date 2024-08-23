@@ -5,6 +5,7 @@ pymongo
 pydantic
 uvicorn
 dotenv
+passlib[bcrypt]
 
 # App
 fastapi
