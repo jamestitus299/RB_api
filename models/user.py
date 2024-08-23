@@ -4,7 +4,6 @@ class User(BaseModel):
     name: str
     email: EmailStr
     password: str
-    links: list[int] | None = None
 
 class UserResponse(BaseModel):
     id: int
