@@ -1,6 +1,7 @@
 
 import os
 from dotenv import load_dotenv
+from fastapi.responses import FileResponse
 from flask import Flask, jsonify
 from fastapi import FastAPI
 
@@ -11,6 +12,10 @@ load_dotenv()
 # App
 # app = Flask(__name__)
 app = FastAPI()
+
+@app.get("/", description="Serves the Base Html", tags=["root"])
+async def root():
+    return FileResponse("src/index.html")
 
 # routes for endpoints
 app.include_router(auth.router, prefix="/user")
