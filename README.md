@@ -1,4 +1,4 @@
-#  API -- FastAPI
+#  RB_API -- FastAPI
 A set of APIs for user registration, login, creating task and note (linked to a user), implementing joins and chain delete functionality using FastApi and MongoDB
 
 ## Endpoints
