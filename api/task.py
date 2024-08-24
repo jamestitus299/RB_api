@@ -1,5 +1,6 @@
 from bson import ObjectId
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Depends
+from fastapi_pagination import Page, Params
 from auth.auth_bearer import JWTBearer
 from db_conn.db import get_db_connection, close_connection
 from models.task import Task
@@ -38,13 +39,17 @@ async def create_task(task: Task, response: Response):
 
 # /user -- Endpoint to retrieve all tasks created by a user
 @router.post('/user', status_code=200, description="Retrieve tasks created by user", tags=["task"], dependencies=[Depends(JWTBearer())])
-async def get_user_task(userId: UserId, response: Response):
+async def get_user_task(userId: UserId, response: Response, params: Params = Depends()):
     try:
         # print(userId.userId)
         client = get_db_connection()
         db = client["rb_database"]
         tasks = db.tasks
-        results = tasks.find({"user": ObjectId(userId.userId)}, {"task": 1, "_id": 0 }).limit(10)
+        # pagination
+        page = params.get('page', 1)
+        limit = params.get('limit', 2) 
+        skip = (page - 1) * limit
+        results = tasks.find({"user": ObjectId(userId.userId)}, {"task": 1, "_id": 0 }).sort("_id", 1).skip(skip).limit(limit)
         
         task_list = [task["task"] for task in results]    
         if len(task_list) == 0:
@@ -54,7 +59,7 @@ async def get_user_task(userId: UserId, response: Response):
         # print(task_list)
         return {'tasks': task_list }, status.HTTP_200_OK
     except Exception as e:
-        # print(e)
+        print(e)
         response.status_code = 500
         return {'error': "Could not retrieve Task"}, status.HTTP_500_INTERNAL_SERVER_ERROR
     finally:
