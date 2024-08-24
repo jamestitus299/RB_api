@@ -51,3 +51,26 @@ async def get_user_task(userId: UserId, response: Response):
         return {'error': "Could not retrieve Task"}, status.HTTP_500_INTERNAL_SERVER_ERROR
     
 
+# /user -- Endpoint to retrieve all tasks, with the user who create it (join) (intended for use by admin )
+@router.post('/all', status_code=200, description="Retrieve all tasks", tags=["task"], dependencies=[Depends(JWTBearer())])
+async def get_user_task(userId: UserId, response: Response):
+    try:
+        # print(userId.userId)
+        db = get_db_connection()
+        tasks = db.tasks
+        userId = str(userId.userId)
+        results = tasks.find({"user": userId}, {"task": 1, "_id": 0 }).limit(10)
+        
+        task_list = [task["task"] for task in results]    
+        if len(task_list) == 0:
+            response.status_code = 404
+            return {'error': "User has no Tasks"}, status.HTTP_404_NOT_FOUND
+        
+        # print(task_list)
+        return {'tasks': task_list }, status.HTTP_200_OK
+    except Exception as e:
+        # print(e)
+        response.status_code = 500
+        return {'error': "Could not retrieve Task"}, status.HTTP_500_INTERNAL_SERVER_ERROR
+    
+
