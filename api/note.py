@@ -78,7 +78,7 @@ async def get_all_user_task(userId: UserId, response: Response):
             return {"error": "Access Forbidden"}, status.HTTP_403_FORBIDDEN
 
         notes = db.notes
-        # Perform the join using $lookup (join on notes and users)
+        # Perform the join using $lookup pipeline (join notes on users)
         pipeline = [
             {
                 "$lookup": {

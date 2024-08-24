@@ -23,7 +23,7 @@ async def delete_user(userId: UserId, response: Response):
                 session.abort_transaction()
                 raise Exception(e)
     except Exception as e:
-        print(e)
+        # print(e)
         response.status_code = 500
         return {'error': "Could not delete user."}, status.HTTP_500_INTERNAL_SERVER_ERROR
     finally:
@@ -32,6 +32,9 @@ async def delete_user(userId: UserId, response: Response):
 
 # Function that deletes user, tasks and notes (transaction)
 def chain_delete(session, client, userId):
+    """
+        deletes the tasks and notes created by the user, and then deletes the user also
+    """
     db = client["rb_database"]
     tasks = db.tasks
     notes = db.notes

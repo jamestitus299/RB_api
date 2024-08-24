@@ -50,7 +50,7 @@ async def signup(user: CreateUser, response: Response):
 @router.post('/signup/admin', status_code=201, description="Signup an Admin User", tags=["user"])
 async def signup_admin(user: CreateAdminUser, response: Response):
 
-    if user.secretKey != str(os.environ.get("ADMIN_SECRET_KEY")): # secret key required for Admin registeration
+    if user.secretKey != str(os.environ.get("ADMIN_SECRET_KEY")): # check secret key required for Admin registeration
         response.status_code = 403
         return {'error': "Could not create Admin"}, status.HTTP_403_FORBIDDEN
     
@@ -93,7 +93,7 @@ async def signup_admin(user: CreateAdminUser, response: Response):
 
 
 
-# /user/login -- Endpoint to login, accepts only application/json data as per the User data model
+# /user/login -- Endpoint to login, accepts only application/json data as per the LoginUser data model
 @router.post('/login', status_code=200, description="Login a user", tags=["user"])
 async def login(user: LoginUser, response: Response):
     try:
@@ -110,9 +110,9 @@ async def login(user: LoginUser, response: Response):
             return {'user': str(user_id), 'access_token' : str(jwt_token["access_token"]) }, status.HTTP_200_OK
         else:
             response.status_code = 403
-            return {'Error':"Invalid Credentials"}, status.HTTP_403_FORBIDDEN
+            return {'error':"Invalid Credentials"}, status.HTTP_403_FORBIDDEN
     except Exception as e:
         response.status_code = 500
-        return {'Error':"Internal Server Error"}, status.HTTP_500_INTERNAL_SERVER_ERROR
+        return {'error':"Internal Server Error"}, status.HTTP_500_INTERNAL_SERVER_ERROR
     finally:
         close_connection(client)
