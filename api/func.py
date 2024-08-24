@@ -28,7 +28,7 @@ async def delete_user(userId: UserId, response: Response):
                 session.abort_transaction()
                 raise Exception(e)
     except Exception as e:
-        print(e)
+        # print(e)
         response.status_code = 500
         return {'error': "Could not delete user."}, status.HTTP_500_INTERNAL_SERVER_ERROR
     finally:

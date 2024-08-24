@@ -45,14 +45,14 @@ async def get_user_note(userId: UserId, response: Response):
         db = client["rb_database"]
         tasks = db.notes
         userId = str(userId.userId)
-        results = tasks.find({"user": userId}, {"note": 1, "_id": 0 }).limit(10)
+        results = tasks.find({"user": ObjectId(userId)}, {"note": 1, "_id": 0 }).limit(10)
         
         note_list = [note["note"] for note in results]
 
         if len(note_list) == 0:
-            response.status_code = 404
-            return {'error': "User has no Notes"}, status.HTTP_404_NOT_FOUND
-        
+            response.status_code = 200
+            return {'notes': []}, status.HTTP_200_OK
+    
         return {'notes': note_list }, status.HTTP_200_OK
     except Exception as e:
         # print(e)
@@ -105,8 +105,8 @@ async def get_all_user_task(userId: UserId, response: Response):
 
         note_list = [note for note in results]    
         if len(note_list) == 0:
-            response.status_code = 404
-            return {'msg': "No Notes"}, status.HTTP_404_NOT_FOUND
+            response.status_code = 200
+            return {'notes': []}, status.HTTP_200_OK
         
         # print(note_list)
         return {'notes': note_list }, status.HTTP_200_OK
