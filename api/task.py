@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
-from pydantic_core import to_json
 from auth.auth_bearer import JWTBearer
 from db_conn.db import get_db_connection
 from models.task import Task

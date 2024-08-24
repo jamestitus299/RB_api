@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
-from api import task, note, auth, status
+from api import func, task, note, auth, status
 
 load_dotenv()
 
@@ -22,6 +22,7 @@ async def root():
 app.include_router(auth.router, prefix="/user")
 app.include_router(task.router, prefix="/task")
 app.include_router(note.router, prefix="/note")
+app.include_router(func.router, prefix="/query")
 app.include_router(status.router)
 
 

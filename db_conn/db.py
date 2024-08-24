@@ -7,3 +7,9 @@ def get_db_connection():
     db = client["rb_database"]  # database name
     return db
 
+
+# create a MongoClient and return a client
+def get_db_client():
+    client = MongoClient(os.environ.get('MONGO_CONN_STRING'), maxPoolSize=10)
+    return client
+
