@@ -40,9 +40,9 @@ async def get_user_task(userId: UserId, response: Response):
         results = tasks.find({"user": userId}, {"task": 1, "_id": 0 }).limit(10)
         
         task_list = [task["task"] for task in results]    
-        if not task_list:
-            response.status_code = 404    
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User has no tasks.")
+        if len(task_list) == 0:
+            response.status_code = 404
+            return {'error': "User has no Tasks"}, status.HTTP_404_NOT_FOUND
         
         # print(task_list)
         return {'tasks': task_list }, status.HTTP_200_OK

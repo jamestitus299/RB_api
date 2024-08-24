@@ -39,14 +39,14 @@ async def get_user_note(userId: UserId, response: Response):
         userId = str(userId.userId)
         results = tasks.find({"user": userId}, {"note": 1, "_id": 0 }).limit(10)
         
-        note_list = [note["note"] for note in results]    
-        if not note_list:
-            response.status_code = 404    
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User has no Note.")
+        note_list = [note["note"] for note in results]
+
+        if len(note_list) == 0:
+            response.status_code = 404
+            return {'error': "User has no Notes"}, status.HTTP_404_NOT_FOUND
         
-        # print(note_list)
         return {'notes': note_list }, status.HTTP_200_OK
     except Exception as e:
         # print(e)
         response.status_code = 500
-        return {'error': "Could not retrieve NOtes"}, status.HTTP_500_INTERNAL_SERVER_ERROR
+        return {'error': "Could not retrieve Notes"}, status.HTTP_500_INTERNAL_SERVER_ERROR
