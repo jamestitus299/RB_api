@@ -30,7 +30,7 @@ async def delete_user(userId: UserId, response: Response):
                 response.status_code = 503
                 return ErrorResponse(error="Could not delete User")
     except Exception as e:
-        # print(e)
+        print(e)
         response.status_code = 500
         return ErrorResponse(error="Internal Serval Error")
     finally:
@@ -48,8 +48,7 @@ def chain_delete(session, client, userId):
     users = db.users
     resultsA = tasks.delete_many({"user": ObjectId(userId)}, session=session)
     resultsB = notes.delete_many({"user": ObjectId(userId)}, session=session)
-    userId = ObjectId(userId)
-    resultC = users.delete_one({"_id": userId}, session=session)
+    resultC = users.delete_one({"_id": ObjectId(userId)}, session=session)
     # print(resultsA)
     # print(resultsB)
     # print(resultC)
