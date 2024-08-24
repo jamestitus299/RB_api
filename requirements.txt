@@ -4,7 +4,7 @@ autopep8
 pymongo
 pydantic[email]
 uvicorn
-passlib[bcrypt]
+passlib
 pyjwt
 python-dotenv
 
