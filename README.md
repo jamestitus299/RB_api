@@ -2,15 +2,21 @@
 A set of APIs for user registration, login, creating task and note lined to a user, implementing joins and chain delete functionality using FastApi and MongoDB
 
 ## Endpoints
-    /user/register     -- Signup API: Endpoint to signup a new user. 
-    /user/login        -- Login API: Endpoint to authenticate an existing user.
+    /user/signup       -- Endpoint to signup a new user. 
+    /user/login        -- Endpoint to authenticate an existing user.
+    /user/signup/admin -- Endpoint to signup an admin user
+
     /task/create       -- create a task and link to the user who created it 
     /task/user         -- retrives all tasks created by the user
+    /task/all          -- retrieves all available tasks along with the user who created the task(join)
+        (only for use by an admin user) 
+
     /note/create       -- create a note and link to the user who created it
     /note/user         -- retrives all notes created by the user
+    /note/all          -- retrieves all notes along with the user who created the task(join)
+        (only for use by an admin user) 
 
-    - Joins: Implement functionality to join data from multiple collections.
-    - Chain Delete: Implement functionality to delete a user and all associated data across collections.
+    /query/delete/user -- endpoint that chain deletes user, and the tasks and notes created by the user
 
 # Getting started
     Create a virtual environment and install the dependencies from the requirements.txt , then start the uvicorn server
@@ -20,5 +26,5 @@ A set of APIs for user registration, login, creating task and note lined to a us
         source .venv/bin/activate
         pip install -r requirements.txt
 
-    start the server by:
+    start the server:
         uvicorn main:app --reload
