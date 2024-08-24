@@ -48,8 +48,8 @@ async def get_user_task(userId: UserId, response: Response):
         
         task_list = [task["task"] for task in results]    
         if len(task_list) == 0:
-            response.status_code = 404
-            return {'error': "User has no Tasks"}, status.HTTP_404_NOT_FOUND
+            response.status_code = 200
+            return {'tasks': []}, status.HTTP_200_OK
         
         # print(task_list)
         return {'tasks': task_list }, status.HTTP_200_OK
@@ -104,13 +104,13 @@ async def get_all_user_task(userId: UserId, response: Response):
 
         task_list = [task for task in results]    
         if len(task_list) == 0:
-            response.status_code = 404
-            return {'error': "No Tasks"}, status.HTTP_404_NOT_FOUND
+            response.status_code = 200
+            return {'tasks': []}, status.HTTP_200_OK
         
         # print(task_list)
         return {'tasks': task_list }, status.HTTP_200_OK
     except Exception as e:
-        print(e)
+        # print(e)
         response.status_code = 500
         return {'error': "Could not retrieve Tasks"}, status.HTTP_500_INTERNAL_SERVER_ERROR
     finally:
