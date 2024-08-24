@@ -21,7 +21,7 @@ async def delete_user(userId: UserId, response: Response):
         with client.start_session() as session:
             try: 
                 session.start_transaction()
-                chain_delete(session, client, str(userId.userId)),
+                chain_delete(session, client, str(userId.userId))
                 session.commit_transaction()
                 return {'msg': "User deleted successfully" }, status.HTTP_200_OK
             except Exception as e:
@@ -52,7 +52,7 @@ def chain_delete(session, client, userId):
     # print(resultsB)
     # print(resultC)
 
-# Checks if the user exists in the database
+# # Checks if the user exists in the database
 def check_user_exist(client, userId):
     """
         checks if the user exists in the database, return the result of the find_one query by userId
