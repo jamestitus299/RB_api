@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends, Response, status
 from auth.auth_bearer import JWTBearer
 from db_conn.db import get_db_connection, close_connection
+from models.response import BaseResponse, ErrorResponse
 from models.user import UserId
 from bson import ObjectId
 
 router = APIRouter()
 
 # /delete/user-- Endpoint to delete a user and tasks and notes created by the user
-@router.post('/delete/user', status_code=200, description="Delete a user and all tasks and notes created by the user", tags=["query"], dependencies=[Depends(JWTBearer())])
+@router.post('/delete/user', status_code=200, response_model=BaseResponse|ErrorResponse , description="Delete a user and all tasks and notes created by the user", tags=["query"], dependencies=[Depends(JWTBearer())])
 async def delete_user(userId: UserId, response: Response):
     try:
         client = get_db_connection() 
@@ -15,7 +16,7 @@ async def delete_user(userId: UserId, response: Response):
         user_exist = check_user_exist(client, str(userId.userId))
         if(user_exist is None):
             response.status_code = 404
-            return {'error': "User dosen't exist"}, status.HTTP_404_NOT_FOUND
+            return ErrorResponse(error="User dosen't exist")
         
         # Transaction to start a transaction, execute the callback, and commit (or abort on error).
         with client.start_session() as session:
@@ -23,14 +24,15 @@ async def delete_user(userId: UserId, response: Response):
                 session.start_transaction()
                 chain_delete(session, client, str(userId.userId))
                 session.commit_transaction()
-                return {'msg': "User deleted successfully" }, status.HTTP_200_OK
+                return BaseResponse(msg="User deleted successfully")
             except Exception as e:
                 session.abort_transaction()
-                raise Exception(e)
+                response.status_code = 503
+                return ErrorResponse(error="Could not delete User")
     except Exception as e:
         # print(e)
         response.status_code = 500
-        return {'error': "Could not delete user."}, status.HTTP_500_INTERNAL_SERVER_ERROR
+        return ErrorResponse(error="Internal Serval Error")
     finally:
         close_connection(client)
 

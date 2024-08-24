@@ -1,10 +1,10 @@
 import os
 from dotenv import load_dotenv
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, Response, status
 from auth.jwt_auth import sign_jwt
 from auth.password_security import check_encrypted_password, encrypt_password
 from db_conn.db import get_db_connection, close_connection
-from models.response import BaseResponse, ErrorResponse, LoginResponse
+from models.response import ErrorResponse, LoginResponse
 from models.user import CreateAdminUser, CreateUser, LoginUser
 
 load_dotenv()
@@ -118,7 +118,7 @@ async def login(user: LoginUser, response: Response):
             response.status_code = 401
             return ErrorResponse(error="Invalid credentials")
     except Exception as e:
-        # print(e)
+        print(e)
         response.status_code = 500
         return ErrorResponse(error="Internal Server Error")
     finally:
