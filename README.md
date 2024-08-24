@@ -16,6 +16,8 @@ A set of APIs for user registration, login, creating task and note (linked to a 
 
     /query/delete/user -- endpoint that chain deletes user, and the tasks and notes created by the user
 
+    /status            -- checks if the server and database server is alive (status of the API)
+
 # Getting started
     Create a virtual environment and install the dependencies from the requirements.txt , then start the uvicorn server
 
