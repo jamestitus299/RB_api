@@ -8,13 +8,11 @@ A set of APIs for user registration, login, creating task and note lined to a us
 
     /task/create       -- create a task and link to the user who created it 
     /task/user         -- retrives all tasks created by the user
-    /task/all          -- retrieves all available tasks along with the user who created the task(join)
-        (only for use by an admin user) 
+    /task/all          -- retrieves all available tasks along with the user who created the task(join) (only for use by an admin user) 
 
     /note/create       -- create a note and link to the user who created it
     /note/user         -- retrives all notes created by the user
-    /note/all          -- retrieves all notes along with the user who created the task(join)
-        (only for use by an admin user) 
+    /note/all          -- retrieves all notes along with the user who created the task(join) (only for use by an admin user) 
 
     /query/delete/user -- endpoint that chain deletes user, and the tasks and notes created by the user
 
@@ -27,4 +25,4 @@ A set of APIs for user registration, login, creating task and note lined to a us
         pip install -r requirements.txt
 
     start the server:
-        uvicorn main:app --reload
+        uvicorn main:app --reload   
