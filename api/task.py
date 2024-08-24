@@ -1,17 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from auth.auth_bearer import JWTBearer
-from db_conn.db import get_db_connection
+from db_conn.db import get_db_connection, close_connection
 from models.task import Task
 from models.user import UserId
 
 router = APIRouter()
 
-# /create -- Endpoint to create a task, linked to a user
+# /create -- Endpoint to create a task, linked to a user, requires valid jwt token (Bearer token)
 @router.post('/create', status_code=201, description="Create a task", tags=["task"], dependencies=[Depends(JWTBearer())])
 async def create_task(task: Task, response: Response):
     try:
         # print(user)
-        db = get_db_connection()
+        client = get_db_connection()
+        db = client["rb_database"]
         tasks = db.tasks
         result = tasks.insert_one(task.model_dump())
         inserted_id = str(result.inserted_id)
@@ -26,6 +27,8 @@ async def create_task(task: Task, response: Response):
         # print(e)
         response.status_code = 500
         return {'error': "Could not create Task"}, status.HTTP_500_INTERNAL_SERVER_ERROR
+    finally:
+        close_connection(client)
     
 
 # /user -- Endpoint to retrieve all tasks created by a user
@@ -33,7 +36,8 @@ async def create_task(task: Task, response: Response):
 async def get_user_task(userId: UserId, response: Response):
     try:
         # print(userId.userId)
-        db = get_db_connection()
+        client = get_db_connection()
+        db = client["rb_database"]
         tasks = db.tasks
         userId = str(userId.userId)
         results = tasks.find({"user": userId}, {"task": 1, "_id": 0 }).limit(10)
@@ -49,14 +53,17 @@ async def get_user_task(userId: UserId, response: Response):
         # print(e)
         response.status_code = 500
         return {'error': "Could not retrieve Task"}, status.HTTP_500_INTERNAL_SERVER_ERROR
+    finally:
+        close_connection(client)
     
 
 # /user -- Endpoint to retrieve all tasks, with the user who create it (join) (intended for use by admin )
-@router.post('/all', status_code=200, description="Retrieve all tasks", tags=["task"], dependencies=[Depends(JWTBearer())])
-async def get_user_task(userId: UserId, response: Response):
+@router.post('/all', status_code=200, description="Retrieve all tasks (only for admin user)", tags=["task"], dependencies=[Depends(JWTBearer())])
+async def get_all_user_task(userId: UserId, response: Response):
     try:
         # print(userId.userId)
-        db = get_db_connection()
+        client = get_db_connection()
+        db = client["rb_database"]
         tasks = db.tasks
         userId = str(userId.userId)
         results = tasks.find({"user": userId}, {"task": 1, "_id": 0 }).limit(10)
@@ -72,5 +79,5 @@ async def get_user_task(userId: UserId, response: Response):
         # print(e)
         response.status_code = 500
         return {'error': "Could not retrieve Task"}, status.HTTP_500_INTERNAL_SERVER_ERROR
-    
-
+    finally:
+        close_connection(client)

@@ -1,9 +1,6 @@
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
-from auth.auth_bearer import JWTBearer
-from auth.jwt_auth import sign_jwt
-from auth.password_security import check_encrypted_password, encrypt_password
-from db_conn.db import get_db_connection
+from fastapi import APIRouter, HTTPException, Response, status
+from db_conn.db import get_db_connection, close_connection
 
 router = APIRouter()
 
@@ -11,13 +8,17 @@ router = APIRouter()
 @router.get('/hello', status_code=200, description="Check if the Server is alive (status)", tags=["status"])
 async def hello(response: Response):  
     try:
-        db = get_db_connection()
+        client = get_db_connection()
+        db = client["rb_database"]
         result = db.command('serverStatus')
         if result:
             response.status_code = 200
             return {'message': 'Hello from RB API!'}, status.HTTP_200_OK
         else:
-            raise HTTPException
+            raise Exception
     except Exception as e:  
+        # print(e)
         response.status_code = 500
         return {'message': "Internal Server Error"}, status.HTTP_500_INTERNAL_SERVER_ERROR
+    finally:
+        close_connection(client)

@@ -1,9 +1,9 @@
 import os
 from dotenv import load_dotenv
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, HTTPException, Response, status
 from auth.jwt_auth import sign_jwt
 from auth.password_security import check_encrypted_password, encrypt_password
-from db_conn.db import get_db_connection
+from db_conn.db import get_db_connection, close_connection
 from models.user import CreateAdminUser, CreateUser, LoginUser
 
 load_dotenv()
@@ -15,7 +15,8 @@ router = APIRouter()
 async def signup(user: CreateUser, response: Response):
     try:
         # print(user)
-        db = get_db_connection()
+        client = get_db_connection()
+        db = client["rb_database"]
         users = db.users
 
         # Check if the user with email exists in the database
@@ -41,6 +42,8 @@ async def signup(user: CreateUser, response: Response):
         # print(e)
         response.status_code = 500
         return {'error': "Could not create User"}, status.HTTP_500_INTERNAL_SERVER_ERROR
+    finally:
+        close_connection(client)
     
 
 # /signup/admin -- Endpoint to create an admin user, the admin should send a secret key along with the password in the request 
@@ -53,7 +56,8 @@ async def signup_admin(user: CreateAdminUser, response: Response):
     
     try:
         # print(user)
-        db = get_db_connection()
+        client = get_db_connection()
+        db = client["rb_database"]
         users = db.users
 
         # Check if the user with email exists in the database
@@ -83,6 +87,8 @@ async def signup_admin(user: CreateAdminUser, response: Response):
         # print(e)
         response.status_code = 500
         return {'error': "Could not create User"}, status.HTTP_500_INTERNAL_SERVER_ERROR
+    finally:
+        close_connection(client)
 
 
 
@@ -91,7 +97,8 @@ async def signup_admin(user: CreateAdminUser, response: Response):
 @router.post('/login', status_code=200, description="Login a user", tags=["user"])
 async def login(user: LoginUser, response: Response):
     try:
-        db = get_db_connection()
+        client = get_db_connection()
+        db = client["rb_database"]
         users = db.users
         result = users.find_one({"email": user.email})
 
@@ -107,3 +114,5 @@ async def login(user: LoginUser, response: Response):
     except Exception as e:
         response.status_code = 500
         return {'Error':"Internal Server Error"}, status.HTTP_500_INTERNAL_SERVER_ERROR
+    finally:
+        close_connection(client)

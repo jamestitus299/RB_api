@@ -1,18 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from auth.auth_bearer import JWTBearer
-from db_conn.db import get_db_connection
+from db_conn.db import get_db_connection, close_connection
 from models.note import Note
 from models.user import UserId
 
 router = APIRouter()
-
 
 # /create -- Endpoint to create a note, linked to a user
 @router.post('/create', status_code=201, description="Create a note", tags=["note"], dependencies=[Depends(JWTBearer())])
 async def create_note(note: Note, response: Response):
     try:
         # print(user)
-        db = get_db_connection()
+        client = get_db_connection()
+        db = client["rb_database"]
         users = db.notes
         result = users.insert_one(note.model_dump())
         inserted_id = str(result.inserted_id)
@@ -27,6 +27,8 @@ async def create_note(note: Note, response: Response):
         # print(e)
         response.status_code = 500
         return {'error': "Could not create Note"}, status.HTTP_500_INTERNAL_SERVER_ERROR
+    finally:
+        close_connection(client)
     
 
 # /user -- Endpoint to retrieve all notes created by a user
@@ -34,7 +36,8 @@ async def create_note(note: Note, response: Response):
 async def get_user_note(userId: UserId, response: Response):
     try:
         # print(userId.userId)
-        db = get_db_connection()
+        client = get_db_connection()
+        db = client["rb_database"]
         tasks = db.notes
         userId = str(userId.userId)
         results = tasks.find({"user": userId}, {"note": 1, "_id": 0 }).limit(10)
@@ -50,3 +53,5 @@ async def get_user_note(userId: UserId, response: Response):
         # print(e)
         response.status_code = 500
         return {'error': "Could not retrieve Notes"}, status.HTTP_500_INTERNAL_SERVER_ERROR
+    finally:
+        close_connection(client)
