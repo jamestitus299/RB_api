@@ -1,3 +1,4 @@
+import datetime
 import os
 from dotenv import load_dotenv
 from fastapi import APIRouter, Response, status
@@ -31,7 +32,8 @@ async def signup(user: CreateUser, response: Response):
             "name": str(user.name),
             "email": str(user.email),
             "password" : str(encrypt_password(user.password)), 
-            "userType" : 0                                      # normal user is 0
+            "userType" : 0,                                      # normal user is 0
+            "createdAt": datetime.datetime.utcnow()
         }
         result = users.insert_one(nUser)
         inserted_id = str(result.inserted_id)
@@ -78,7 +80,8 @@ async def signup_admin(user: CreateAdminUser, response: Response):
             "name": str(user.name),
             "email": str(user.email),
             "password" : str(encrypt_password(user.password)), 
-            "userType" : 1                                      # Admin user is 1
+            "userType" : 1,                                    # Admin user is 1
+            "createdAt": datetime.datetime.utcnow()
         }
         result = users.insert_one(adminUser)
         inserted_id = str(result.inserted_id)
