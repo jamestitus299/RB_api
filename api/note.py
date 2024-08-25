@@ -17,7 +17,7 @@ async def create_note(note: Note, response: Response):
         db = client["rb_database"]
         users = db.notes
         note_value = {
-            "user" : ObjectId(note.user),
+            "user" : note.userId,
             "note" : note.note,
             "createdAt": datetime.datetime.utcnow()
         }
@@ -82,7 +82,7 @@ async def get_all_user_note(getNote: GetUserNote, response: Response):
 
         # check if the user is Admin user
         getUser = users.find_one({"_id": ObjectId(userId)})
-        if getUser and getUser["userType"] != 1:
+        if not getUser or getUser["userType"] != 1:
             response.status_code = 403
             return ErrorResponse(error="Access Forbidden")
 
@@ -127,11 +127,7 @@ async def get_all_user_note(getNote: GetUserNote, response: Response):
         # for document in results:
         #     print(document)
 
-        note_list = [note for note in results]    
-        if len(note_list) == 0:
-            response.status_code = 200
-            return {'notes': []}, status.HTTP_200_OK
-        
+        note_list = [note for note in results]        
         # print(note_list)
         res = AdminNoteResponse(notes=note_list)
         return res

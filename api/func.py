@@ -49,9 +49,9 @@ def chain_delete(session, client, userId):
     resultsA = tasks.delete_many({"user": ObjectId(userId)}, session=session)
     resultsB = notes.delete_many({"user": ObjectId(userId)}, session=session)
     resultC = users.delete_one({"_id": ObjectId(userId)}, session=session)
-    # print(resultsA)
-    # print(resultsB)
-    # print(resultC)
+    print(resultsA)
+    print(resultsB)
+    print(resultC)
 
 # # Checks if the user exists in the database
 def check_user_exist(client, userId):

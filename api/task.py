@@ -18,7 +18,7 @@ async def create_task(task: Task, response: Response):
         db = client["rb_database"]
         tasks = db.tasks
         task_value = {
-            "user" : ObjectId(task.user),
+            "user" : task.userId,
             "task" : task.task,
             "createdAt": datetime.datetime.utcnow()
         }
@@ -82,7 +82,7 @@ async def get_all_user_task(getTask: GetUserTask, response: Response):
         
         # check if the user is Admin user
         getUser = users.find_one({"_id": ObjectId(userId)})
-        if getUser and getUser["userType"] != 1:
+        if not getUser or getUser["userType"] != 1:
             response.status_code = 403
             return ErrorResponse(error="Access Forbidden")
 
@@ -111,7 +111,7 @@ async def get_all_user_task(getTask: GetUserTask, response: Response):
             },
             {
             "$sort": {
-                "createdAt": -1  # Sort by orderId in ascending order
+                "createdAt": -1  # Sort by orderId in descending order
                 }
             },
             {

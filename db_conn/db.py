@@ -25,7 +25,7 @@ def get_db_connection():
     if not pool_created:
         create_pool()
     client = connection_pool.get() # gets a client connection from the connection pool
-    print("-------------------------- connection poop size :" + str(connection_pool.qsize()))
+    # print("-------------------------- connection poop size :" + str(connection_pool.qsize()))
     return client
 
 # closes the Client connection
@@ -34,4 +34,4 @@ def close_connection(client):
         closes the connection to the MongoDB database(returns the connection back to the connection pool)
     """
     connection_pool.put(client) # mimics connections close (adds the connections back to the connectino pool)
-    print("-------------------------- connection poop size :" + str(connection_pool.qsize()))
+    # print("-------------------------- connection poop size :" + str(connection_pool.qsize()))

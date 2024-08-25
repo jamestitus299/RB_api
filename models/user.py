@@ -1,4 +1,5 @@
-from pydantic import BaseModel, EmailStr
+from bson import ObjectId
+from pydantic import BaseModel, EmailStr, field_validator
 
 class CreateUser(BaseModel):
     name: str
@@ -18,3 +19,11 @@ class LoginUser(BaseModel):
 
 class UserId(BaseModel):
     userId: str
+
+    @field_validator('userId')
+    def validate_objectId(cls, user):
+        try:
+            ObjectId(str(user))
+            return user
+        except:
+            raise ValueError('Invalid userId')
