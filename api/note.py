@@ -3,10 +3,8 @@ from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from auth.auth_bearer import JWTBearer
 from db_conn.db import get_db_connection, close_connection
-from models.note import GetNoteTask, Note
+from models.note import GetUserNote, Note
 from models.response import ErrorResponse, NoteCreatedResponse, UserNoteResponse, AdminNoteResponse
-from models.note import GetUserNote
-from models.user import UserId
 
 router = APIRouter()
 
