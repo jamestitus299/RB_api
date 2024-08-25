@@ -7,4 +7,4 @@ class Note(BaseModel):
 class GetUserNote(BaseModel):
     userId: str
     page : int | None = None
-    limit: int | None = None 
+    limit: int | None = None
