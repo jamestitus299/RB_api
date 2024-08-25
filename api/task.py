@@ -48,7 +48,7 @@ async def get_user_task(getUserTask: GetUserTask, response: Response):
         # check if the user exists
         users = db.users
         getUser = users.find_one({"_id": ObjectId(getUserTask.userId)})
-        if getUser and getUser["userType"] != 1:
+        if not getUser:
             response.status_code = 404
             return ErrorResponse(error="User does not exist")
         
@@ -57,7 +57,7 @@ async def get_user_task(getUserTask: GetUserTask, response: Response):
         page  = getUserTask.page if getUserTask.page else 1
         limit = getUserTask.limit if getUserTask.limit else 2      # default page size is 10
         skip = (page - 1) * limit
-        results = tasks.find({"user": ObjectId(getUserTask.userId)}, {"task": 1, "_id": 0 }).sort("_id", 1).skip(skip).limit(limit)
+        results = tasks.find({"user": ObjectId(getUserTask.userId)}, {"task": 1, "_id": 0 }).sort("createdAt", -1).skip(skip).limit(limit)
         task_list = [task["task"] for task in results]    
         # print(task_list)
         res = UserTaskResponse(tasks=task_list)
@@ -111,7 +111,7 @@ async def get_all_user_task(getTask: GetUserTask, response: Response):
             },
             {
             "$sort": {
-                "_id": 1  # Sort by orderId in ascending order
+                "createdAt": -1  # Sort by orderId in ascending order
                 }
             },
             {
@@ -133,7 +133,7 @@ async def get_all_user_task(getTask: GetUserTask, response: Response):
         res = AdminTaskResponse(tasks=task_list)
         return res
     except Exception as e:
-        print(e)
+        # print(e)
         response.status_code = 500
         return ErrorResponse(error="Internal Server Error")
     finally:

@@ -48,16 +48,16 @@ async def get_user_note(getUserNote: GetUserNote, response: Response):
         # check if the user exists
         users = db.users
         getUser = users.find_one({"_id": ObjectId(getUserNote.userId)})
-        if getUser and getUser["userType"] != 1:
+        if not getUser:
             response.status_code = 404
             return ErrorResponse(error="User does not exist")
         
         notes = db.notes
         # pagination
-        page  = getUserNote.page if getUserNote.page else 1
-        limit = getUserNote.limit if getUserNote.limit else 2      # default page size is 10
+        page  = getUserNote.page if getUserNote.page else 1        # default is page 1
+        limit = getUserNote.limit if getUserNote.limit else 2      # default limit is 10
         skip = (page - 1) * limit
-        results = notes.find({"user": ObjectId(getUserNote.userId)}, {"note": 1, "_id": 0 }).sort("_id", 1).skip(skip).limit(limit)
+        results = notes.find({"user": ObjectId(getUserNote.userId)}, {"note": 1, "_id": 0 }).sort("createdAt", -1).skip(skip).limit(limit)
         note_list = [note["note"] for note in results]    
         # print(task_list)
         res = UserNoteResponse(notes=note_list)
@@ -66,16 +66,16 @@ async def get_user_note(getUserNote: GetUserNote, response: Response):
         # print(e)
         response.status_code = 500
         return ErrorResponse(error="Internal Server Error")
-    finally:
+    finally:    
         close_connection(client)
 
 
 # /all -- Endpoint to retrieve all notes, with the user who create it (join) (intended for use by admin )
 @router.post('/all', status_code=200, response_model=AdminNoteResponse|ErrorResponse , description="Retrieve all notes (only for admin user)", tags=["note"], dependencies=[Depends(JWTBearer())])
-async def get_all_user_task(getNote: GetUserNote, response: Response):
+async def get_all_user_note(getNote: GetUserNote, response: Response):
     try:
         # print(userId.userId)
-        userId = str(userId.userId)
+        userId = str(getNote.userId)
         client = get_db_connection()
         db = client["rb_database"]
         users = db.users
@@ -111,7 +111,7 @@ async def get_all_user_task(getNote: GetUserNote, response: Response):
             },
             {
             "$sort": {
-                "_id": 1  # Sort by orderId in ascending order
+                "createdAt": -1  # Sort by orderId in descending order
                 }
             },
             {

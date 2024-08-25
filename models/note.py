@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 class Note(BaseModel):
     user: str           # user who create the note
@@ -6,5 +6,5 @@ class Note(BaseModel):
 
 class GetUserNote(BaseModel):
     userId: str
-    page : int | None = None
-    limit: int | None = None
+    page: int = Field(default=1, gt=0)
+    limit: int = Field(default=10, gt=0)

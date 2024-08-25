@@ -2,30 +2,29 @@ from typing import List
 from pydantic import BaseModel
 
 class BaseResponse(BaseModel):
-    msg: str
+    msg: str                # success msg
 
 class LoginResponse(BaseModel):
-    user: str
-    access_token : str
+    user: str               # user_id from database (_id)
+    access_token : str      # JWT token
 
 class ErrorResponse(BaseModel):
-    error : str
+    error : str             # error msg
 
 class TaskCreatedResponse(BaseModel):
-    task : str      # the id of the created Task
-
+    task : str              # the id of the created Task
 
 class UserTaskResponse(BaseModel):
-    tasks : List[str]
+    tasks : List[str]       # list of tasks
 
 class AdminTaskResponse(BaseModel):
-    tasks : List[dict]
+    tasks : List[dict]      # list of dict of {task: user_info}
 
 class NoteCreatedResponse(BaseModel):
-    note : str      # the id of the created Note
+    note : str              # the id of the created Note
 
 class UserNoteResponse(BaseModel):
-    notes : List[str]
+    notes : List[str]       # list of notes
 
 class AdminNoteResponse(BaseModel):
-    notes : List[dict]
+    notes : List[dict]        # list of dict of {note: user_info} 

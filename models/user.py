@@ -5,7 +5,7 @@ class CreateUser(BaseModel):
     email: EmailStr  # primary key (also the id generated in the database)
     password: str
 
-# The userType for a normal user is 0, for an admin user it is 1
+# The userType for a normal user is 0, for an admin user it is 1 (in the database)
 class CreateAdminUser(BaseModel):
     name: str
     email: EmailStr  # primary key (also the id generated in the database)
