@@ -1,7 +1,7 @@
 import datetime
 import os
 from dotenv import load_dotenv
-from fastapi import APIRouter, Response, status
+from fastapi import APIRouter, Response
 from auth.jwt_auth import sign_jwt
 from auth.password_security import check_encrypted_password, encrypt_password
 from db_conn.db import get_db_connection, close_connection

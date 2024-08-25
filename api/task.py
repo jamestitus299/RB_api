@@ -1,7 +1,6 @@
 import datetime
 from bson import ObjectId
-from fastapi import APIRouter, Depends, HTTPException, Response, status, Depends
-from fastapi_pagination import Page, Params
+from fastapi import APIRouter, Depends, Response, Depends
 from auth.auth_bearer import JWTBearer
 from db_conn.db import get_db_connection, close_connection
 from models.response import AdminTaskResponse, ErrorResponse, TaskCreatedResponse, UserTaskResponse

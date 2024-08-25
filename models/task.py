@@ -1,5 +1,5 @@
 from bson import ObjectId
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 class Task(BaseModel):
     userId: str           # user who create the task

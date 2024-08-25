@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, HTTPException, Response                                                                                                                                         
+from fastapi import APIRouter, Response                                                                                                                                         
 from db_conn.db import get_db_connection, close_connection
 from models.response import BaseResponse, ErrorResponse
 

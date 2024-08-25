@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, Response
 from auth.auth_bearer import JWTBearer
 from db_conn.db import get_db_connection, close_connection
 from models.response import BaseResponse, ErrorResponse
