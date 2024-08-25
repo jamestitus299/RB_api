@@ -10,16 +10,16 @@ router = APIRouter()
 async def hello(response: Response):
     try:
         client = get_db_connection()
-        db = client["rb_database"]
-        result = db.command('serverStatus')
-        if result:
+        result = client.list_database_names()
+        # print(result)
+        if result and "rb_database" in result:
             res = BaseResponse(msg="Hello from RB API!")
             return res
         else:
             response.status_code = 500
             return ErrorResponse(error="Server Down")
     except Exception as e:  
-        # print(e)
+        print(e)
         response.status_code = 500
         return ErrorResponse(error="Internal Server Error")
     finally:
