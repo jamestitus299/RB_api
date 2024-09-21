@@ -3,7 +3,7 @@ from pydantic import BaseModel, EmailStr, field_validator
 
 class CreateUser(BaseModel):
     name: str
-    email: str  # primary key (also the id generated in the database)
+    email: EmailStr  # primary key (also the id generated in the database)
     password: str
 
 # The userType for a normal user is 0, for an admin user it is 1 (in the database)
